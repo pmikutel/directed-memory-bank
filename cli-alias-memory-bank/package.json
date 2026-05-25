@@ -1,0 +1,32 @@
+{
+  "name": "memory-bank",
+  "version": "0.0.1",
+  "description": "Reserved by the Directed Memory Bank project. Use `npx directed-memory-bank init` instead.",
+  "keywords": [
+    "directed-memory-bank",
+    "dmb",
+    "memory-bank"
+  ],
+  "homepage": "https://github.com/pmikutel/directed-memory-bank",
+  "bugs": {
+    "url": "https://github.com/pmikutel/directed-memory-bank/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pmikutel/directed-memory-bank.git"
+  },
+  "license": "MIT",
+  "author": "Pawel Mikutel",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "bin": {
+    "memory-bank": "./bin/redirect.js"
+  },
+  "files": [
+    "bin/",
+    "README.md",
+    "LICENSE"
+  ]
+}

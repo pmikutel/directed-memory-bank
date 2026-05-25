@@ -1,0 +1,37 @@
+{
+  "name": "directed-memory-bank",
+  "version": "0.0.1",
+  "description": "Persistent project understanding for AI coding agents. Plain markdown files that work across Claude Code, Cursor, Codex, Gemini. Name reserved; real CLI ships at v0.1.0.",
+  "keywords": [
+    "ai",
+    "claude",
+    "claude-code",
+    "cursor",
+    "memory-bank",
+    "context",
+    "llm",
+    "directed-memory-bank"
+  ],
+  "homepage": "https://github.com/pmikutel/directed-memory-bank",
+  "bugs": {
+    "url": "https://github.com/pmikutel/directed-memory-bank/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pmikutel/directed-memory-bank.git"
+  },
+  "license": "MIT",
+  "author": "Pawel Mikutel",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "bin": {
+    "dmb": "./bin/dmb.js"
+  },
+  "files": [
+    "bin/",
+    "README.md",
+    "LICENSE"
+  ]
+}
