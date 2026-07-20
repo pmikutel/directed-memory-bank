@@ -156,7 +156,7 @@ If you want a project-wide output style, write one yourself; DMB just won't ship
 
 ## MCP — file-based stays canonical
 
-Claude Code reads `.mcp.json` at the project root (committed) and `~/.claude.json` for user-scope MCP servers. Plugins can also ship `.mcp.json`. DMB intentionally **stays file-only** — see [`../../internal/oss-planning/decisions.md` § *Why NOT MCP*](https://github.com/pmikutel/directed-memory-bank) for the rationale (short version: the read path is already covered by deterministic skills / hooks / path-rules; MCP triggers on probabilistic model judgement; adding a server blurs the "just files in your repo" pitch).
+Claude Code reads `.mcp.json` at the project root (committed) and `~/.claude.json` for user-scope MCP servers. Plugins can also ship `.mcp.json`. DMB intentionally **stays file-only**: the read path is already covered by deterministic skills / hooks / path-rules; MCP triggers on probabilistic model judgement; and adding a server blurs the "just files in your repo" pitch.
 
 DMB will revisit MCP when an adopter signal genuinely warrants it. Until then, the file-based path is the canonical one.
 
