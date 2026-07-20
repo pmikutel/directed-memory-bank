@@ -1,0 +1,34 @@
+{
+  "_comment_for_adopters": "Cursor Hooks reference shape (GA since Cursor 1.7, Oct 2025). Hooks run as subprocesses communicating over stdio with JSON. The `command` field accepts any executable — shell scripts, Python, Node/Bun, compiled binaries — no bash -c wrapper needed. Optional per-hook `timeout` (seconds) caps execution; default is platform-dependent, so set it explicitly if it matters. Place this file at `.cursor/hooks.json` in your project root (project scope), or at `~/.cursor/hooks.json` (user scope). Project-scope hooks may require your team's Cursor trust settings. Verify event names and schema against current docs at https://cursor.com/docs/hooks before customising. Hooks should READ memory-bank context, not WRITE to it. See docs/integration-architecture.md and docs/automation-patterns.md.",
+
+  "hooks": {
+    "sessionStart": [
+      {
+        "_comment": "Pre-load memory-bank essentials on session start: brief.md plus any tasks/work/*.md whose branch: matches the current git branch. Adopters supply the script. stdout is injected as context for the session.",
+        "command": "scripts/cursor/session-start-load-context.sh"
+      }
+    ],
+
+    "beforeSubmitPrompt": [
+      {
+        "_comment": "Optional: surface live in-flight work just before the user's prompt is submitted. Keep it fast — runs on every prompt. Useful for injecting active tasks/work/<branch>.md without forcing the user to @-mention it.",
+        "command": "scripts/cursor/before-submit-active-work.sh"
+      }
+    ],
+
+    "preToolUse": [
+      {
+        "_comment": "Gate dangerous tool calls. Replace with anything you want to block (writes outside memory-bank/tasks/, destructive git ops, etc.). Hook returns non-zero exit / structured stdout to block. `timeout` is explicit here as a recommended pattern — default is platform-dependent.",
+        "command": "scripts/cursor/pretool-policy.sh",
+        "timeout": 10
+      }
+    ],
+
+    "afterFileEdit": [
+      {
+        "_comment": "Optional: after edits to source code, trigger a fast lint or type-check. Keep it fast — runs after every file edit.",
+        "command": "scripts/cursor/after-file-edit-checks.sh"
+      }
+    ]
+  }
+}

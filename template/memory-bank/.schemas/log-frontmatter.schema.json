@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/pmikutel/directed-memory-bank/schemas/log-frontmatter.schema.json",
+  "title": "DMB log-file frontmatter",
+  "description": "YAML frontmatter for memory-bank/tasks/log/pr-<n>-<slug>.md files — permanent record of completed work.",
+  "type": "object",
+  "required": ["title", "status", "pr", "merged_at"],
+  "additionalProperties": false,
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Human-readable title.",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "description": "Log entries are always done.",
+      "const": "done"
+    },
+    "pr": {
+      "type": "integer",
+      "description": "PR number this entry records.",
+      "minimum": 1
+    },
+    "branch": {
+      "type": ["string", "null"],
+      "description": "Git branch the PR shipped from. Optional but useful for traceability.",
+      "pattern": "^[A-Za-z0-9._/\\-]+$"
+    },
+    "started": {
+      "type": ["string", "null"],
+      "description": "Date work began (YYYY-MM-DD).",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "merged_at": {
+      "type": "string",
+      "description": "Date the PR was merged (YYYY-MM-DD).",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    }
+  }
+}

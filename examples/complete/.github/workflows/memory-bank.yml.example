@@ -1,0 +1,59 @@
+# DMB — archive merged PRs into tasks/log/
+#
+# This is an illustrative workflow. Copy it to .github/workflows/memory-bank.yml
+# in your own repo and adapt to your conventions. The actual archive logic
+# lives in scripts/memory-bank-archive.sh, which is intentionally left to you.
+#
+# See docs/automation-patterns.md for the full pattern description.
+
+name: DMB — archive merged PRs
+
+on:
+  pull_request:
+    types: [opened, closed]
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  archive:
+    # Prevent the workflow from triggering itself when memory-bot pushes
+    if: github.actor != 'memory-bot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Use the memory-bot identity so commits are attributable and
+          # can be filtered out of re-triggering other workflows.
+          token: ${{ secrets.MEMORY_BOT_TOKEN }}
+
+      - name: Archive or link scratchpad
+        run: scripts/memory-bank-archive.sh
+        env:
+          EVENT: ${{ github.event.action }}          # 'opened' | 'closed'
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_MERGED: ${{ github.event.pull_request.merged }}
+          PR_LABELS: ${{ toJson(github.event.pull_request.labels) }}
+
+      - name: Commit and push if anything changed
+        run: |
+          git config user.name "memory-bot"
+          git config user.email "memory-bot@users.noreply.github.com"
+          git add memory-bank/tasks/
+          if ! git diff --cached --quiet; then
+            git commit -m "memory-bot: update tasks for PR #${PR_NUMBER}"
+            git push
+          fi
+
+# Reminder for other workflows in the repo (tests, lint, etc.):
+# Add this to prevent bot commits on memory-bank paths from re-triggering CI.
+#
+# on:
+#   pull_request:
+#     paths-ignore:
+#       - 'memory-bank/tasks/work/**'
+#       - 'memory-bank/tasks/log/**'

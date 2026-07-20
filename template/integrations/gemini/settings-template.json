@@ -1,0 +1,35 @@
+{
+  "_comment_for_adopters": "Reference shape only. Replace example commands with your own scripts. Hooks should READ memory-bank context, not WRITE to it. See docs/integration-architecture.md and docs/automation-patterns.md. Verify hook field names against https://geminicli.com/docs/hooks/ before customising — Gemini may evolve the schema.",
+
+  "hooks": {
+    "SessionStart": [
+      {
+        "_comment": "Pre-load memory-bank essentials: brief.md plus any tasks/work/*.md whose branch: matches the current git branch. Adopters supply the script. stdout is prepended/injected as context for the session.",
+        "command": "scripts/gemini/session-start-load-context.sh"
+      }
+    ],
+
+    "BeforeTool": [
+      {
+        "_comment": "Before any tool call, gate dangerous operations or apply project-specific policy. Replace with whatever you want to gate (e.g. block writes outside memory-bank/tasks/, refuse destructive git operations, etc.).",
+        "command": "scripts/gemini/before-tool-policy.sh"
+      }
+    ],
+
+    "AfterTool": [
+      {
+        "_comment": "Optional: after edits to source code, trigger a fast lint or type-check. Keep it fast — this runs after every tool call.",
+        "command": "scripts/gemini/after-tool-fast-checks.sh"
+      }
+    ]
+  },
+
+  "mcpServers": {
+    "_comment": "Declare MCP servers here if your project uses any. Example DMB MCP server slot (if/when DMB ships one — see docs/integration-architecture.md):"
+  },
+
+  "context": {
+    "_comment": "Optional: override the default GEMINI.md filename if your project uses a different convention.",
+    "fileName": "GEMINI.md"
+  }
+}
