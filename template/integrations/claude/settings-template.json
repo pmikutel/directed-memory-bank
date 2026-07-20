@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "_comment_for_adopters": "Reference shape only. Replace example commands with your own scripts. Hooks should READ memory-bank context, not WRITE to it. See docs/integration-architecture.md and docs/automation-patterns.md. Claude Code has 30+ hook events today — the ones shown here are the highest-leverage for DMB. Verify event names and schema against https://code.claude.com/docs/en/hooks before customising.",
+
+  "hooks": {
+    "SessionStart": [
+      {
+        "_comment": "Pre-load memory-bank essentials at session start: brief.md plus any tasks/work/*.md whose branch: matches the current git branch. Adopters supply the script.",
+        "type": "command",
+        "command": "scripts/claude/session-start-load-context.sh"
+      }
+    ],
+
+    "UserPromptSubmit": [
+      {
+        "_comment": "Intent-matched memory-bank inject — when user phrasing suggests an operation, inject the relevant memory-bank slice without forcing a skill / @-mention. Useful for catching phrasings the skill descriptions don't match exactly.",
+        "type": "command",
+        "command": "scripts/claude/user-prompt-load-context.sh"
+      }
+    ],
+
+    "PreToolUse": [
+      {
+        "_comment": "Before any Bash command, log it. Replace with anything else you want to gate (e.g. block writes outside memory-bank/tasks/, refuse destructive git operations, etc.).",
+        "matcher": "Bash",
+        "type": "command",
+        "command": "scripts/claude/pretool-log-bash.sh"
+      },
+      {
+        "_comment": "Before any write to memory-bank, route it by path. Writes to project/ or technical/ should require human review; writes to tasks/work/ and tasks/log/ are safe for automation. Adopters supply the script.",
+        "matcher": "Write|Edit",
+        "type": "command",
+        "command": "scripts/claude/pretool-memory-bank-policy.sh"
+      }
+    ],
+
+    "PostToolUse": [
+      {
+        "_comment": "Optional: after edits to source code, trigger a fast lint or type-check. Keep it fast — this runs after every edit.",
+        "matcher": "Write|Edit",
+        "type": "command",
+        "command": "scripts/claude/posttool-fast-checks.sh"
+      }
+    ],
+
+    "PreCompact": [
+      {
+        "_comment": "Re-inject memory-bank refs before Claude compacts the context window. Without this, /compact can throw away the inventory and the user has to re-prime. Surface _index.md pointers + active tasks/work/<branch>.md so they survive compaction.",
+        "type": "command",
+        "command": "scripts/claude/precompact-reinject.sh"
+      }
+    ],
+
+    "SessionEnd": [
+      {
+        "_comment": "Opt-in: write a short session summary back to tasks/work/<branch>.md or to a daily journal file. Aligns with DMB's RAM-layer pattern (one file per topic). Keep it tight — append, don't rewrite. Disable for headless / CI runs.",
+        "type": "command",
+        "command": "scripts/claude/session-end-journal.sh"
+      }
+    ]
+  },
+
+  "permissions": {
+    "_comment_for_adopters": "Allowlist commands you trust to run without prompting. Keep this minimal at first; add entries as you confirm them. The harness prompts for anything not listed here.",
+    "allow": [
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(rg:*)",
+      "Bash(ls:*)"
+    ]
+  }
+}

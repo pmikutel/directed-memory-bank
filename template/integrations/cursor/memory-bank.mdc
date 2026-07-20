@@ -1,0 +1,108 @@
+---
+description: DMB workflow and inventory — load when starting work, navigating an unfamiliar area, or maintaining memory-bank/
+---
+
+# DMB — Cursor entry
+
+DMB is the project's shared knowledge base. This is an **Agent-Requested** rule — Cursor loads it on demand when the description matches the operation at hand. Description-only frontmatter (no `alwaysApply`, no `globs:`) keeps it cheap; the always-on `essentials.mdc` carries anything that must always be in scope.
+
+## Workflow — where to start
+
+### Step 1: glance at current work
+
+The `memory-bank/tasks/` layer is an **optional scratchpad** — it may or may not contain relevant context for what you're about to do.
+
+- `memory-bank/tasks/work/` — one file per in-flight topic (idea, plan, active work). **May be empty.** If nothing relevant exists, that's fine.
+- `memory-bank/tasks/log/` — one file per completed unit of work (typically one per merged PR). Useful for history / debugging context.
+- `memory-bank/tasks/process.md` — the workflow for maintaining `work/` and `log/`.
+
+Do not fabricate entries. If there's nothing in `work/` that matches, move on.
+
+### Step 2: let path-scoped rules fire
+
+Operation-specific routing lives in the per-area rules under `.cursor/rules/` (backend, frontend, migrations, etc.). Each one names the memory-bank files relevant for that area and fires automatically when the editor is touching matching files. Trust them; do not duplicate their work here.
+
+### Step 3: navigate when you need to
+
+If you need a file that no path-scoped rule covers — or you're not sure what knowledge the project has captured — read `memory-bank/_index.md`. It is the inventory of what exists and which files matter for which kind of work. Use it to discover what to load, not as a step taken every session.
+
+## The `tasks/` layer
+
+### What it is
+
+RAM memory for code work. It **does not replace** Notion, Jira, or any tool that defines what work exists.
+
+### `work/` — optional scratchpad
+
+One file per topic, human-readable kebab-case slug (e.g., `choppy-audio-issue.md`). Frontmatter carries state (`status`, `branch`, `pr`, `started`, `updated`). A topic's file grows from "idea" through "planned" / "active" and moves to `log/` on PR merge.
+
+### `log/` — permanent record
+
+One file per completed unit of work, named `pr-<number>-<slug>.md`. Populated by automation on PR merge, or on demand.
+
+### When to create a `work/` file
+
+Only when a scratchpad would help. Three valid triggers: (1) capturing an idea for later, (2) picking up a ticket from an external tool and wanting notes, (3) mid-implementation split into two PRs. Features can and do ship without ever creating a `work/` file.
+
+### When to update
+
+- Starting new work on an existing topic → update `work/<slug>.md`: `status`, `branch`, `updated`.
+- Completing work on demand → move `work/<slug>.md` to `log/pr-<num>-<slug>.md` and add a summary. (Automation does this automatically if configured.)
+- Pausing → set `status: paused` on the `work/<slug>.md`. Do not move it.
+
+See `memory-bank/tasks/process.md` for the full workflow and anti-patterns.
+
+## DMB updates
+
+### When to update
+
+DMB updates occur when:
+
+1. **Discovering new project patterns** — update the appropriate file in `memory-bank/`.
+2. **After significant changes** — update relevant context files.
+3. **User requests "update DMB"** — review all files systematically.
+4. **Context needs clarification** — improve documentation clarity.
+
+### "Update DMB" procedure
+
+**Required reading before any write:** `memory-bank/project/doc-guide.md` — style, length, and hygiene rules for every memory-bank file. Length budgets, no duplication, bullets over paragraphs.
+
+Follow `memory-bank/tasks/process.md`:
+
+1. Review `work/` for stale `status: active` files; reconcile.
+2. If anything significant completed since the last update, ensure `log/` entries exist.
+3. Update technical docs if architecture / patterns changed.
+4. If completed-work rationale has recurred or become a coding rule, **promote** it to the relevant `technical/<topic>.md` per `tasks/process.md`. Leave the `log/` entry intact. Do not create a `decisions/` directory.
+5. If new project intelligence was discovered, route it to the right layer (see below).
+
+## Three-layer split
+
+Project intelligence lives in three places, by audience and shape:
+
+| Layer | Where | What |
+|---|---|---|
+| Knowledge (shared, tool-agnostic) | `memory-bank/` | Architecture, domain, conventions, in-flight scratchpads |
+| Integration (Cursor-specific) | `.cursor/rules/*.mdc` | Path-scoped routing pointing at memory-bank files; thin, no duplicated knowledge |
+| Preferences (per-user) | Cursor auto-memory | Personal corrections and workflow tweaks; managed by Cursor, not committed |
+
+When you discover a pattern that would help future work, ask: would another tool (Claude, Gemini, Codex) need this too? **Yes → memory-bank.** Cursor only → `.cursor/rules/`. Just for me → auto-memory.
+
+Avoid putting full knowledge into `.cursor/rules/` — it drifts from memory-bank and other tools can't read it. Rules should be thin pointers that say *when* to load *which* memory-bank files.
+
+## Where docs live
+
+Three destinations, by audience:
+
+- `memory-bank/` — code-context (architecture, domain, conventions, patterns)
+- `README.md` per package — setup / run commands for humans
+- External-docs folder — content for readers outside the codebase (other teams, external consumers)
+
+**Default on ambiguity: memory-bank.**
+
+---
+
+DMB is the canonical project knowledge: operation routing in `.cursor/rules/`, knowledge in `memory-bank/`, and `memory-bank/_index.md` as the inventory of what exists. Keep it accurate and current.
+
+# Planning
+
+When asked to enter "Planner Mode" or using the /plan command, reflect deeply on the changes being asked and analyse existing code to map the full scope of changes needed. Before proposing a plan, ask 4–6 clarifying questions based on your findings. Once answered, draft a comprehensive plan and ask for approval. Once approved, implement all steps. After completing each phase, mention what was just done and what's next, plus phases remaining.

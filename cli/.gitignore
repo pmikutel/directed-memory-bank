@@ -1,0 +1,4 @@
+node_modules/
+bin/
+templates/
+*.tgz

@@ -1,0 +1,51 @@
+# Codex CLI project config — reference shape only.
+#
+# Replace example commands with your own scripts. Hooks should READ memory-bank
+# context, not WRITE to it. See docs/integration-architecture.md and
+# docs/automation-patterns.md.
+#
+# Codex hook format may evolve — verify against
+# https://developers.openai.com/codex/hooks before customising.
+#
+# Place this file at `.codex/config.toml` in your project root, or merge its
+# contents into `~/.codex/config.toml` for user-wide settings. Project-level
+# config requires the project to be marked trusted by Codex.
+
+# --- Hooks ---
+
+[[hooks]]
+# Pre-load memory-bank essentials: brief.md plus any tasks/work/*.md whose
+# branch: matches the current git branch. Adopters supply the script.
+# stdout (or JSON `hookSpecificOutput.additionalContext`) is appended as
+# developer context for the session.
+event = "SessionStart"
+command = ["bash", "scripts/codex/session-start-load-context.sh"]
+
+[[hooks]]
+# Before any tool call, gate dangerous operations. Replace with anything else
+# you want to gate (e.g. block writes outside memory-bank/tasks/, refuse
+# destructive git operations, etc.).
+event = "PreToolUse"
+command = ["bash", "scripts/codex/pretool-policy.sh"]
+
+[[hooks]]
+# Optional: after edits to source code, trigger a fast lint or type-check.
+# Keep it fast — this runs after every edit.
+event = "PostToolUse"
+command = ["bash", "scripts/codex/posttool-fast-checks.sh"]
+
+# --- MCP servers (optional) ---
+
+# Declare MCP servers your project uses. Example DMB MCP server slot
+# (if/when DMB ships one — see docs/integration-architecture.md):
+#
+# [mcp_servers.dmb]
+# command = "npx"
+# args = ["@directed-memory-bank/mcp-server"]
+
+# --- Fallback AGENTS.md filenames (optional) ---
+
+# Codex also reads AGENTS.md hierarchically without any config. If you use a
+# different filename in this project, list it here:
+#
+# project_doc_fallback_filenames = ["CLAUDE.md", "GEMINI.md"]

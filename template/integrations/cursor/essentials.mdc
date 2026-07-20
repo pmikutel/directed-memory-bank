@@ -1,0 +1,19 @@
+---
+description: Cursor IDE entry point - minimal essentials that always apply
+globs:
+alwaysApply: true
+---
+
+# Essentials
+
+- No git commits without explicit permission. File edits are fine; running `git commit` needs the user to say so.
+- Operation-specific routing lives in the per-area rules under `.cursor/rules/` — let the rule for the area you're touching fire and load the memory-bank files it names.
+- `memory-bank/_index.md` is the inventory of what exists in DMB — consult it when navigating or when authoring a new rule, not as a runtime step on every operation.
+
+## Writing into `memory-bank/`
+
+Follow `memory-bank/project/doc-guide.md` for style, length, and hygiene before editing any memory-bank file.
+
+---
+
+> **Authoring note** (delete after customising): this file is intentionally short. Add project-specific essentials only if they truly apply on every Cursor invocation — anything operation-scoped belongs in a path-scoped rule under `.cursor/rules/`, not here.

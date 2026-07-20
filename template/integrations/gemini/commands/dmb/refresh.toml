@@ -1,0 +1,16 @@
+# Gemini CLI custom slash command — invocable as /dmb:refresh
+# Verify TOML schema against https://geminicli.com/docs/cli/custom-commands/
+# before customising.
+
+description = "Refresh DMB context — reload Gemini memory and re-read memory-bank inventory"
+
+prompt = """
+Refresh the project memory context for this session:
+
+1. Run `/memory reload` to refresh GEMINI.md and any @imports.
+2. Re-read @memory-bank/_index.md to confirm the current DMB inventory.
+3. Re-read @memory-bank/project/brief.md for project overview.
+4. If any `memory-bank/tasks/work/*.md` has `branch:` matching the current git branch, read it as live context.
+
+Report which files were loaded and any state changes since the last refresh.
+"""

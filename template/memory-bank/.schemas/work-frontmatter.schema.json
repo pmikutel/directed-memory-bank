@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/pmikutel/directed-memory-bank/schemas/work-frontmatter.schema.json",
+  "title": "DMB work-file frontmatter",
+  "description": "YAML frontmatter for memory-bank/tasks/work/*.md files — in-flight topic scratchpads.",
+  "type": "object",
+  "required": ["title", "status"],
+  "additionalProperties": false,
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Human-readable title. Can differ from the filename slug.",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "description": "Lifecycle stage of this work item.",
+      "enum": ["idea", "planned", "active", "blocked", "paused", "done"]
+    },
+    "priority": {
+      "type": "string",
+      "description": "Optional priority signal.",
+      "enum": ["low", "medium", "high"]
+    },
+    "branch": {
+      "type": ["string", "null"],
+      "description": "Git branch name. Set when work begins. Enables PR-linking automation.",
+      "pattern": "^[A-Za-z0-9._/\\-]+$"
+    },
+    "pr": {
+      "type": ["integer", "null"],
+      "description": "PR number. Typically set by automation when a PR opens.",
+      "minimum": 1
+    },
+    "started": {
+      "type": ["string", "null"],
+      "description": "Date work began (YYYY-MM-DD).",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "updated": {
+      "type": ["string", "null"],
+      "description": "Last-updated date (YYYY-MM-DD). Keep fresh for staleness detection.",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    }
+  }
+}

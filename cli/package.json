@@ -1,7 +1,7 @@
 {
   "name": "directed-memory-bank",
-  "version": "0.0.1",
-  "description": "Persistent project understanding for AI coding agents. Plain markdown files that work across Claude Code, Cursor, Codex, Gemini. Name reserved; real CLI ships at v0.1.0.",
+  "version": "0.1.0",
+  "description": "Install Directed Memory Bank (DMB) — persistent project understanding for AI coding agents.",
   "keywords": [
     "ai",
     "claude",
@@ -18,7 +18,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pmikutel/directed-memory-bank.git"
+    "url": "git+https://github.com/pmikutel/directed-memory-bank.git",
+    "directory": "cli"
   },
   "license": "MIT",
   "author": "Pawel Mikutel",
@@ -27,11 +28,23 @@
     "node": ">=18"
   },
   "bin": {
-    "dmb": "./bin/dmb.js"
+    "dmb": "./bin/index.js"
   },
   "files": [
     "bin/",
+    "templates/",
     "README.md",
     "LICENSE"
-  ]
+  ],
+  "scripts": {
+    "prebuild": "node scripts/copy-templates.js",
+    "build": "tsc",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0"
+  }
 }

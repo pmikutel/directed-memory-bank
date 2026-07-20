@@ -1,0 +1,71 @@
+# DMB Adoption Status
+
+> Maintained by your AI during install and updates. Don't edit by hand unless you know what you're doing.
+
+**Last updated:** [today's date]
+
+| Section | File(s) | Status | Notes |
+|---|---|---|---|
+| Project brief | `project/brief.md` | not_started | — |
+| Business domain | `project/domain.md` | not_started | — |
+| Vision | `project/vision.md` | not_started | — |
+| Tech stack | `technical/stack.md` | not_started | — |
+| Architecture | `technical/architecture.md` | not_started | — |
+| RAM layer (tasks/) | `tasks/process.md` + `work/` + `log/` | not_started | — |
+| Integration: Claude Code | `CLAUDE.md`, `.claude/` | not_started | — |
+| Integration: Cursor | `.cursor/rules/` | not_started | — |
+| Integration: Codex | `AGENTS.md` | not_started | — |
+| Integration: Gemini | `GEMINI.md` | not_started | — |
+| Integration: other | (varies) | not_started | — |
+
+## Status legend
+
+- **filled** —
+  - *Content sections (project / technical / RAM):* required content present, no `[FILL_IN]` markers remain.
+  - *Tool-integration sections:* every canonical tier from the install matrix (see `docs/integration-architecture.md` § *Recommended install ladders*) is present on disk, OR each pre-selected tier was explicitly declined by the user during the matrix step (note declines in `Notes`).
+- **partial** — content present but incomplete.
+  - *Tool-integration sections:* this is the **default** if any canonical tier is silently absent — not installed AND not explicitly declined. Enumerate what's missing in `Notes`. Burden of proof is on `filled`.
+- **postponed** — user explicitly said "come back to this".
+- **skipped** — user explicitly said "I don't want this".
+- **not_started** — file exists as skeleton but no user content yet.
+
+## `memory-bank/.install/` — install-time scaffolding
+
+The `memory-bank/.install/` directory (present after `dmb init`) holds reference templates the AI copies from during Section 7 of the install interview. It's **not** part of your project's knowledge layer and you don't normally touch it.
+
+After Section 7 finishes (or whenever you're satisfied with your integration setup), three reasonable choices:
+
+- **Keep it** — useful if you'll later add another tool's integration via *"continue DMB install"*. Lowest friction for future use.
+- **Add `.install/` to `.gitignore`** (recommended) — keeps the templates locally available without bloating git history. Future re-runs of `dmb init` will refresh them.
+- **Delete it** — works if you're done customising and won't add tool integrations later. `dmb init --force` would re-create it if needed.
+
+## How the AI fills the status for integration sections
+
+After running the Section 7 matrix install for a tool (see `INSTALL.md` § *Matrix install*):
+
+1. User said *"looks good"* and all ✓ items were installed → **filled**. `Notes` mentions any optional `—` items the user added.
+2. User explicitly declined some ✓ item(s) → **filled** still. `Notes` enumerates the declines (e.g. *"Skills declined; user prefers path-scoped rules only."*).
+3. Any ✓ item is silently absent (not installed AND not explicitly declined) → **partial**. `Notes` lists what's missing.
+
+This rule exists because silent skipping of canonical tiers leaves users with the least-reliable mechanism by default while telling them they're "fully installed." The matrix flow plus this status rule together prevent that.
+
+## Next suggestion
+
+(AI: fill this with one concrete suggestion — the highest-leverage next item.)
+
+## Note for AI agents reading this file
+
+Use the table to inform your responses without nagging.
+
+- **Contextual nudges only.** When the user asks something where a `not_started` or `partial` file would directly help, mention it once, in the form:
+
+  > *"Btw, I could help you better here if you provided more context in `memory-bank/[path]`. Want to fill it now, or shall I proceed with what I have?"*
+
+  Then proceed either way. Triggers:
+  - **Direct relevance** to what the user just asked — not tangential.
+  - **At most once per session** — never nag.
+  - **Peer tone** — "I could help better" not "you forgot to fill X."
+  - **Never gate** — always offer to proceed without filling.
+- **No periodic reminders.** Don't volunteer "by the way, you have N unfilled sections" out of context.
+- **Re-engage on user request.** If the user says "continue install" or "what's left in DMB?", read this file and resume the INSTALL.md flow at the highest-priority unfilled section.
+- **Update on completion.** When you fill a section through interview, update this file: status, last_updated, and clear/replace `notes` if no longer relevant.
